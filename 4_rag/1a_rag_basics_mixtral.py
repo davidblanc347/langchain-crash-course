@@ -12,7 +12,7 @@ from mistralai.client import MistralClient
 load_dotenv()
 MISTRAL_API_KEY=os.getenv("MISTRAL_API_KEY")
 client = MistralClient(api_key=MISTRAL_API_KEY)
-
+print(MISTRAL_API_KEY)
 # Define the directory containing the text file and the persistent directory
 current_dir = os.path.dirname(os.path.abspath(__file__))
 file_path = os.path.join(current_dir, "books", "Peirce_Theory_of_Signs.txt")
@@ -43,7 +43,7 @@ if not os.path.exists(persistent_directory):
 
     # Create embeddings
     print("\n--- Creating embeddings ---")
-    embeddings = client.embeddings(model="mistral-embed", input=[docs[i].page_content for i in range(len(docs)/10)])  # Update to a valid embedding model if needed
+    embeddings = client.embeddings(model="mistral-embed", input=[doc.page_content for doc in docs])  # Update to a valid embedding model if needed
     print("\n--- Finished creating embeddings ---")
 
     # Create the vector store and persist it automatically
