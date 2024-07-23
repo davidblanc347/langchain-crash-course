@@ -7,7 +7,7 @@ from langchain_openai import OpenAIEmbeddings
 
 # Define the directory containing the text file and the persistent directory
 current_dir = os.path.dirname(os.path.abspath(__file__))
-file_path = os.path.join(current_dir, "books", "odyssey.txt")
+file_path = os.path.join(current_dir, "books", "Peirce_Theory_of_Signs.txt")
 persistent_directory = os.path.join(current_dir, "db", "chroma_db")
 
 # Check if the Chroma vector store already exists
@@ -21,7 +21,7 @@ if not os.path.exists(persistent_directory):
         )
 
     # Read the text content from the file
-    loader = TextLoader(file_path)
+    loader = TextLoader(file_path,encoding='utf-8')
     documents = loader.load()
 
     # Split the document into chunks
