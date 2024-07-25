@@ -21,7 +21,7 @@ if not os.path.exists(persistent_directory):
         )
 
     # Read the text content from the file
-    loader = TextLoader(file_path)
+    loader = TextLoader(file_path, encoding="utf-8")
     documents = loader.load()
 
     # Split the document into chunks
@@ -35,15 +35,17 @@ if not os.path.exists(persistent_directory):
 
     # Create embeddings
     print("\n--- Creating embeddings ---")
-    embeddings = OpenAIEmbeddings(
-        model="text-embedding-3-small"
-    )  # Update to a valid embedding model if needed
+    from langchain_community.embeddings import OllamaEmbeddings
+    import ollama
+    embeddings = OllamaEmbeddings(model="nomic-embed-text")
+    #embeddings = OpenAIEmbeddings(model="text-embedding-3-small")  # Update to a valid embedding model if needed
     print("\n--- Finished creating embeddings ---")
 
     # Create the vector store and persist it automatically
     print("\n--- Creating vector store ---")
-    db = Chroma.from_documents(
-        docs, embeddings, persist_directory=persistent_directory)
+
+    
+    db = Chroma.from_documents(docs, embeddings, persist_directory=persistent_directory)
     print("\n--- Finished creating vector store ---")
 
 else:
