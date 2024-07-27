@@ -126,9 +126,10 @@ for i,data in enumerate(results['documents'][0]):
 
 
 #generate a response combining the prompt and data we retrieved in step 2
+time_debut = time.time()
 output = ollama.generate(
   model="llama3.1",
   prompt=f"Using this data: {data}. Respond to this prompt: {prompt}"
 )
-
-print(f"{color.HEADER}{color.WARNING}{output['response']}{color.ENDC}")
+print(time.time()-time_debut)
+print(f"{color.OKCYAN}{output['response']}{color.ENDC}")
