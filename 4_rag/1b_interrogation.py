@@ -43,15 +43,26 @@ for i,data in enumerate(results['documents'][0]):
     index_couleur=0
   else :
     index_couleur+=1
-    
+
+
+#################################################################################
+#  Choix du llm
+#################################################################################
   
-#################################################################################
-# Generation of a response combining the prompt and data we retrieved in step 2
-#################################################################################
+llm_choisi = input("Choisir un llm ()'1' local, '2' mistral API, '3' chatgpt4o API) : ") 
 time_debut = time.time()
-output = ollama.generate(
-  model="llama3.1",
-  prompt=f"Using this data: {datatotal}. Respond to this prompt: {prompt}"
-)
-print(time.time()-time_debut)
-print(f"{color.OKCYAN}{output['response']}{color.ENDC}")
+match llm_choisi:
+  case '1': # Generation with local ollama3.1 ###################################  
+    output = ollama.generate(
+      model="llama3.1",
+      prompt=f"Using this data: {datatotal}. Respond to this prompt: {prompt}"
+    )
+    print(f"{color.OKCYAN}{output['response']}{color.ENDC}")
+  case '2':
+    from langchain_core.messages import HumanMessage, SystemMessage
+    from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
+    chat = ChatMistralAI(api_key=MISTRAL_API_KEY)
+    prompt=f"Using this data: {datatotal}. Respond to this prompt: {prompt}"
+    output = chat.invoke(prompt)
+    print(f"{color.OKCYAN}{output.content}{color.ENDC}")
+print(f"Durée de l'opération d'embeddings : {time.time() - time_debut:.1f} secs")

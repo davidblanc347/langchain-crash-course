@@ -14,7 +14,9 @@ from langchain_mistralai.chat_models import ChatMistralAI
 current_dir = os.path.dirname(os.path.abspath(__file__))
 file_path = os.path.join(current_dir, "books", "Peirce_Theory_of_Signs.txt")
 persistent_directory = os.path.join(current_dir, "db", "chroma_db_mistralai")
-print(persistent_directory)
+
+print("\n______________________________________________________________\n")
+print(f"Persistent directory : {persistent_directory}")
 
 #################################################################################
 # Chargement d'un fichier txt
@@ -46,7 +48,7 @@ text_splitter = RecursiveCharacterTextSplitter(
 )
 texts = text_splitter.create_documents([documents[0].page_content])
 
-print("Nombre de chunks avec tous les separators", len(texts))
+print(f"Nombre de chunks avec tous les separators : {len(texts)}")
 print(type(texts))
 
 
@@ -58,33 +60,37 @@ import ollama
 from chromadb.utils.embedding_functions import OllamaEmbeddingFunction
 
 # test si la base existe déjà
-# Check if the Chroma vector store already exists
+
 if not os.path.exists(persistent_directory):
-  print("Persistent directory does not exist. Initializing vector store...")
-  print(persistent_directory)
+  print("\nPersistent directory does not exist. Initializing vector store...\n")
   # Ensure the text file exists
   if not os.path.exists(file_path):
       raise FileNotFoundError(
           f"The file {file_path} does not exist. Please check the path."
       )
   client = chromadb.PersistentClient(path=persistent_directory)
- 
+  print("Création de la base chromadb : chroma_db_mistralai")
   liste_chunks = [chunk.page_content for chunk in texts]
-  time_debut = time.time()
-  print(time_debut)
 
   collection = client.create_collection(name="docs")
+  print("Création de la collection : docs")
   documents=liste_chunks
 
   #store each document in a vector embedding database
-  for i, d in enumerate(documents):
-    response = ollama.embeddings(model="nomic-embed-text", prompt=d)
-    embedding = response["embedding"]
-    collection.add(
-      ids=[str(i)],
-      embeddings=[embedding],
-      documents=[d]
-    )
-  print(time.time()-time_debut)
-  print("Vectore store completed")
+  try:
+    time_debut = time.time()
+    for i, d in enumerate(documents):
+      response = ollama.embeddings(model="nomic-embed-text", prompt=d)
+      embedding = response["embedding"]
+      collection.add(
+        ids=[str(i)],
+        embeddings=[embedding],
+        documents=[d]
+      )
+    print(f"Durée de l'opération d'embeddings : {time.time() - time_debut:.1f} secs")
+    print("Opération terminée")
+  except:
+    print("Le serveur ollama n'est pas actif")
+
+print("\n______________________________________________________________\n\n")
 
