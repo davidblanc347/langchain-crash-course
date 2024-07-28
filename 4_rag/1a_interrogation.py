@@ -48,8 +48,6 @@ texts = text_splitter.create_documents([documents[0].page_content])
 
 print("Nombre de chunks avec tous les separators", len(texts))
 print(type(texts))
-#for i in range(len(texts)):
-  #print(i, "\n","Longueur du chunk",len(texts[i].page_content),texts[i],"\n\n")
 
 
 #################################################################################
@@ -70,16 +68,11 @@ if not os.path.exists(persistent_directory):
           f"The file {file_path} does not exist. Please check the path."
       )
   client = chromadb.PersistentClient(path=persistent_directory)
-  # ollama_embeddings = OllamaEmbeddingFunction(
-  #     model_name="nomic-embed-text",
-  #     url="http://localhost:11434/api/embeddings",
-  # )
+ 
   liste_chunks = [chunk.page_content for chunk in texts]
   time_debut = time.time()
   print(time_debut)
-  # Insert embeddings into ChromaDB
-  #chroma_db = Chroma.from_documents(documents=liste_chunks, embedding=ollama_embeddings)
-  #client = chromadb.Client()
+
   collection = client.create_collection(name="docs")
   documents=liste_chunks
 
@@ -95,42 +88,3 @@ if not os.path.exists(persistent_directory):
   print(time.time()-time_debut)
   print("Vectore store completed")
 
-#################################################################################
-#  Retrieval avec la collection chromadb avec mistral et ollama
-#################################################################################
-
-# generate an embedding for the prompt and retrieve the most relevant doc
-client = chromadb.PersistentClient(path=persistent_directory)
-collection = client.get_collection(name="docs")
-prompt="Can you detail me the signification of 'interpretant' ?"
-
-response = ollama.embeddings(
-  prompt=prompt,
-  model="nomic-embed-text"
-)
-results = collection.query(
-  query_embeddings=[response["embedding"]],
-  n_results=15
-)
-datatotal = results['documents']
-color_list = [color.WARNING,color.OKGREEN,color.OKBLUE]
-index_couleur=0
-for i,data in enumerate(results['documents'][0]):
-  couleur = color_list[index_couleur]
-  print(f"{couleur}Chunk {i+1} {len(results['documents'][0][i])}\n {results['documents'][0][i]}\n{color.ENDC}")
-  if index_couleur==2 :
-    index_couleur=0
-  else :
-    index_couleur+=1
-    
-  
-#################################################################################
-# Generation of a response combining the prompt and data we retrieved in step 2
-#################################################################################
-time_debut = time.time()
-output = ollama.generate(
-  model="llama3.1",
-  prompt=f"Using this data: {datatotal}. Respond to this prompt: {prompt}"
-)
-print(time.time()-time_debut)
-print(f"{color.OKCYAN}{output['response']}{color.ENDC}")
