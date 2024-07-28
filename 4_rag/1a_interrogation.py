@@ -102,7 +102,7 @@ if not os.path.exists(persistent_directory):
 # generate an embedding for the prompt and retrieve the most relevant doc
 client = chromadb.PersistentClient(path=persistent_directory)
 collection = client.get_collection(name="docs")
-prompt="Can detail me the signification of 'interpretant' ?"
+prompt="Can you detail me the signification of 'interpretant' ?"
 
 response = ollama.embeddings(
   prompt=prompt,
@@ -124,9 +124,9 @@ for i,data in enumerate(results['documents'][0]):
     index_couleur+=1
     
   
-
-
-#generate a response combining the prompt and data we retrieved in step 2
+#################################################################################
+# Generation of a response combining the prompt and data we retrieved in step 2
+#################################################################################
 time_debut = time.time()
 output = ollama.generate(
   model="llama3.1",
