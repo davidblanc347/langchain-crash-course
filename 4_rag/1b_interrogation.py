@@ -100,7 +100,7 @@ def create_filename(title):
     date_time_str = now.strftime("%Y%m%d_%H%M%S")
     
     # Combine the transformed title with the date and time
-    final_title = f"{title}_{date_time_str}.txt"
+    final_title = f"{title}_{date_time_str}.md"
     return final_title
 
 def save_file(content, title):
@@ -108,13 +108,13 @@ def save_file(content, title):
     current_dir = os.getcwd()
     
     # Define the target directory
-    target_dir = os.path.join(current_dir, '4-rag', 'responses')
+    target_dir = os.path.join(current_dir, '4_rag', 'responses')
     
     # Create the target directory if it does not exist
     os.makedirs(target_dir, exist_ok=True)
     
     # Create the filename
-    filename = create_filename(title) + ".txt"
+    filename = create_filename(title)
     
     # Define the full file path
     file_path = os.path.join(target_dir, filename)
@@ -127,7 +127,7 @@ def save_file(content, title):
 
 filename = create_filename(question_initiale)
 print(f"Réponse enregistrée dans {filename} du dossier responses.")
-question_response_chunks = f"{question_initiale} ({filename})\n{output.content}\n\n{tous_les_chunks_retrieved}"
+question_response_chunks = f"# {question_initiale}\n({filename})\n\n## {output.content}\n\n## Retrieved chunks\n{tous_les_chunks_retrieved}"
 save_file(question_response_chunks, filename)
 
 
