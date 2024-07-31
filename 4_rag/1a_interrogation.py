@@ -49,7 +49,7 @@ text_splitter = RecursiveCharacterTextSplitter(
 texts = text_splitter.create_documents([documents[0].page_content])
 
 print(f"Nombre de chunks avec tous les separators : {len(texts)}")
-print(type(texts))
+print(texts[0])
 
 
 #################################################################################
@@ -83,7 +83,7 @@ if not os.path.exists(persistent_directory):
       response = ollama.embeddings(model="nomic-embed-text", prompt=d)
       embedding = response["embedding"]
       collection.add(
-        ids=[str(i)],
+        ids=[i],
         embeddings=[embedding],
         documents=[d]
       )

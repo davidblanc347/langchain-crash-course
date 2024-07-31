@@ -36,7 +36,7 @@ response = ollama.embeddings(
 )
 results = collection.query(
   query_embeddings=[response["embedding"]],
-  n_results=15
+  n_results=5
 )
 
 tous_les_chunks_retrieved = ''
