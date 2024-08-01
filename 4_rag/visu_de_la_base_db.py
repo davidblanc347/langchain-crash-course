@@ -61,5 +61,5 @@ for index in range(len(texts)):
     texts[index].metadata["source"]=file_name
     texts[index].metadata["idx"]=index
     texts[index].metadata["length"]=len(texts[index].page_content)
-    print("Affiche le premier élément de la liste texts : " , texts[index].metadata, texts[index].page_content)
+    print(f"Affiche l'élément {index} de la liste texts : " , texts[index].metadata, texts[index].page_content)
     print("_________________")
