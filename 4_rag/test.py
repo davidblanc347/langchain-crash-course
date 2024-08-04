@@ -24,7 +24,7 @@ persistent_directory = os.path.join(current_dir, "db", "chroma_db_mistralai")
 client = chromadb.PersistentClient(path=persistent_directory)
 collection = client.get_collection(name="docs")
 
-#print(collection.peek())
+print(collection.peek())
 result = collection.get()
 
 print(result['metadatas'])
