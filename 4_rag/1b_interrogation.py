@@ -27,7 +27,7 @@ collection = client.get_collection(name="docs")
 # Quelle est la question ?
 question_initiale=input("Quelle est la question : ")
 if question_initiale == "":
-  question_initiale = "Can you detail me the signification of 'interpretant' ?"
+  question_initiale = "Can you detail me the signification of the 'dynamic interpretant' ?"
 prompt=question_initiale
 
 response = ollama.embeddings(
@@ -56,7 +56,7 @@ for i,data in enumerate(results['documents'][0]):
 #  Choix du llm
 #################################################################################
   
-llm_choisi = input("Choisir un llm ()'1' local, '2' mistral API : ") 
+llm_choisi = input("Choisir un llm : '1' local, '2' mistral API : ") 
 time_debut = time.time()
 match llm_choisi:
   case '1': # Generation with local ollama3.1 ###################################  
@@ -64,14 +64,16 @@ match llm_choisi:
       model="llama3.1",
       prompt=f"Using this data: {results['documents']}. Respond to this prompt: {prompt}"
     )
-    print(f"{color.OKCYAN}{output['response']}{color.ENDC}")
+    reponse = output['response']
   case '2':
     from langchain_core.messages import HumanMessage, SystemMessage
     from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
     chat = ChatMistralAI(api_key=MISTRAL_API_KEY)
     prompt=f"Using this data: {results['documents']}. Respond to this prompt: {prompt}"
     output = chat.invoke(prompt)
-    print(f"{color.OKCYAN}{output.content}{color.ENDC}")
+    reponse = output.content
+
+print(f"{color.OKCYAN}{reponse}{color.ENDC}")
 print(f"Durée de la recherche : {time.time() - time_debut:.1f} secs")
 
 #################################################################################
@@ -100,7 +102,7 @@ def create_filename(title):
     date_time_str = now.strftime("%Y%m%d_%H%M%S")
     
     # Combine the transformed title with the date and time
-    final_title = f"{title}_{date_time_str}.md"
+    final_title = f"{date_time_str}_{title}[20].md"
     return final_title
 
 def save_file(content, title):
@@ -120,14 +122,17 @@ def save_file(content, title):
     file_path = os.path.join(target_dir, filename)
     
     # Write the content to the file
-    with open(file_path, 'w') as file:
+    with open(file_path, 'w', encoding="utf-8") as file:
         file.write(content)
     
     print(f"File saved to {file_path}")
+    
+    
+# Enregistrement de la question, de la réponse et des chunks dans un fichier txt
 
 filename = create_filename(question_initiale)
 print(f"Réponse enregistrée dans {filename} du dossier responses.")
-question_response_chunks = f"# {question_initiale}\n({filename})\n\n## {output.content}\n\n## Retrieved chunks\n{tous_les_chunks_retrieved}"
+question_response_chunks = f"# {question_initiale}\n({filename})\n\n## {reponse}\n\n## Retrieved chunks\n{tous_les_chunks_retrieved}"
 save_file(question_response_chunks, filename)
 
 

@@ -30,10 +30,10 @@ print(persistent_directory)
 txt_path = os.path.join(current_dir, "books", "Peirce_collected_papers.txt")
 import re
 chiffres_premieres_lignes = []
-with open(txt_path, "r", encoding='utf-8') as f :# Séparer le texte en morceaux à partir de "Peirce: CP"
+with open(txt_path, "r", encoding='utf-8') as f :# Séparer le texte en morceaux à partir de chaque occurrence de "Peirce: CP"
     texte = f.read()
     morceaux = texte.split("Peirce: CP")
-
+    print("nb morceaux :", morceaux[1200:1202])
     # Enlever les espaces blancs au début et à la fin de chaque morceau
     morceaux = [morceau.strip() for morceau in morceaux if morceau.strip()]
 max =0
@@ -46,4 +46,4 @@ for idx, text in enumerate(morceaux):
     liste_longueur.append(len(text))
     #print(f"Index {idx}, longueur : {len(text)}, volume : {text[0:1]} ,  idx  et section  {text[0:5]}      \n\n")
 print("nb de morceaux", len(morceaux))
-print(liste_volume[10:100])
+#print(liste_volume[0:10])
