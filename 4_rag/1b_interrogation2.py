@@ -25,7 +25,7 @@ client = chromadb.PersistentClient(path=persistent_directory)
 collection = client.get_collection(name="docs")
 
 # Quelle est la question ?
-question_initiale=input("Quelle est la question : ")
+question_initiale=input("Quelle est la question ? ")
 if question_initiale == "":
   question_initiale = "Can you detail me the signification of the 'dynamic interpretant' ?"
 prompt=question_initiale
