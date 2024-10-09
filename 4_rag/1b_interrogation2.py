@@ -9,6 +9,9 @@ from dotenv import load_dotenv
 load_dotenv()  # take environment variables from .env.
 MISTRAL_API_KEY = os.getenv("MISTRAL_API_KEY")
 
+# key from openAI
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+
 from langchain_core.messages import HumanMessage
 from langchain_mistralai.chat_models import ChatMistralAI
 
@@ -55,23 +58,38 @@ for i,data in enumerate(results['documents'][0]):
 #################################################################################
 #  Choix du llm
 #################################################################################
-  
-llm_choisi = input("Choisir un llm : '1' local, '2' mistral API : ") 
+
+llm_choisi = input("Choisir un llm : '1' local, '2' mistral API : , '3' openai API : ") 
 time_debut = time.time()
+prompt=f"Using this data: {results['documents']}. Respond to this prompt: {prompt}"
 match llm_choisi:
   case '1': # Generation with local ollama3.1 ###################################  
-    output = ollama.generate(
-      model="llama3.1",
-      prompt=f"Using this data: {results['documents']}. Respond to this prompt: {prompt}"
+    from langchain_ollama import ChatOllama
+    llm = ChatOllama(
+        model="llama3.1:8b",
+        temperature=0,
+        # other params...
     )
-    reponse = output['response']
   case '2':
-    from langchain_core.messages import HumanMessage, SystemMessage
-    from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
-    chat = ChatMistralAI(api_key=MISTRAL_API_KEY)
-    prompt=f"Using this data: {results['documents']}. Respond to this prompt: {prompt}"
-    output = chat.invoke(prompt)
-    reponse = output.content
+    from langchain_mistralai import ChatMistralAI
+    llm = ChatMistralAI(
+        model="mistral-large-latest",
+        temperature=0,
+        max_retries=2,
+        api_key = MISTRAL_API_KEY
+    )
+  case '3':
+    from langchain_openai import ChatOpenAI
+    llm = ChatOpenAI(
+        model="gpt-4o",
+        temperature=0,
+        max_tokens=None,
+        timeout=None,
+        max_retries=2,
+        api_key=OPENAI_API_KEY
+    )
+output = llm.invoke(prompt)
+reponse = output.content
 
 print(f"{color.OKCYAN}{reponse}{color.ENDC}")
 print(f"Durée de la recherche : {time.time() - time_debut:.1f} secs")
